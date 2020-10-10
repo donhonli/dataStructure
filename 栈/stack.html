@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>封装栈类</title>
+</head>
+<body>
+ <script>
+    //  封装栈类
+     function Stack() {
+        //  栈中属性
+        this.items = []
+
+        // 栈的相关操作
+
+        // 1.将元素压入栈
+        Stack.prototype.push = function(element){
+            this.items.push(element)
+        }
+        // 2.从栈中取出元素
+        Stack.prototype.pop = function(){
+            return this.items.pop()
+        }
+        // 3.查看栈顶元素
+        Stack.prototype.peek = function(){
+            return this.items[this.items.length - 1]
+        }
+        // 4.判断栈是否为空
+        Stack.prototype.isEmpty = function(){
+            return this.items.length == 0
+        }
+        // 5.获取栈中元素的个数
+        Stack.prototype.size = function(){
+            return this.items.length
+        }
+        // 6.toString方法
+        Stack.prototype.toString = function(){
+            var result = this.items
+            return result.join('')
+        }
+     }
+     var s = new Stack()
+
+     //十进制转二进制
+     function dec2bin(decNumber){
+         //定义栈对象  
+         var stack = new Stack()
+         while( decNumber > 0 ){
+            // 获取余数，放入栈中
+            stack.push(decNumber % 2)
+            // 获取整除后的结果 最为下一次运算
+            decNumber =Math.floor(decNumber / 2) 
+         }
+        //  从栈中取出
+        var binaryString = ''
+        while(!stack.isEmpty()){
+            binaryString += stack.pop()
+        }
+        return binaryString
+     }
+     console.log(dec2bin(1000))
+ </script>   
+</body>
+</html>
