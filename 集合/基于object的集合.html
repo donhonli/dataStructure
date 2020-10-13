@@ -48,6 +48,69 @@
         Set.prototype.values = function(){
             return  Object.keys(this.items)
         } 
+
+
+        //集合间的操作
+        //并集
+        Set.prototype.union = function (otherSet){
+            //1.创建新的集合
+            var unionSet = new Set()
+
+            //2.将集合A中所有元素添加到新集合
+            var values = this.values()
+            for(var i = 0; i < values.length; i++){
+                unionSet.add(values[i])
+            }
+
+            //3.取出b集合中的元素 判断是否需要加入到新集合
+            values = otherSet.values()
+            for(var i = 0; i < values.length; i++){
+                unionSet.add(values[i])
+            }
+            return unionSet
+        }
+        //交集
+        Set.prototype.intersection = function(otherSet){
+            //1.创建新的集合
+            var intersectionSet = new Set()
+
+            var values = this.values()
+            for(var i = 0; i < values.length; i++){
+                var item = values[i]
+                if(otherSet.has(item)){
+                    intersectionSet.add(item)
+                }
+            }
+            return intersectionSet
+        }
+        //差集
+        Set.prototype.difference = function(otherSet){
+            //1.创建新的集合
+            var differenceSet = new Set()
+            //取出a集合每个元素，判断是否存在b中，如果不存在，添加到新集合
+            var values = this.values()
+            for(var i = 0; i < values.length; i++){
+                var item = values[i]
+                if( !otherSet.has(item) ){
+                    differenceSet.add(item)
+                }
+            }
+            return differenceSet
+        }
+        //子集 判断集合a是否为集合b的子集
+        Set.prototype.sonSet = function(otherSet){
+            //1.创建新的集合
+            var sonSet = new Set()
+            //取出a集合每个元素，判断是否存在b中，如果不存在，return false
+            var values = this.values()
+            for(var i = 0; i < values.length; i++){
+                var item = values[i]
+                if( !otherSet.has(item) ){
+                    return false
+                }
+            }
+            return true
+        }
     }
     //测试
     var set = new Set()
@@ -59,8 +122,14 @@
     // console.log(set.remove('ads'))
     // console.log(set.remove('ads'))
     // set.clear()
-    console.log(set.size())
+    var set1 = new Set()
+    set1.add(1)
+    set1.add('aaa')
+    set1.add(3)
+    // console.log(set.size())
     console.log(set)
+    console.log(set1)
+    console.log(set1.sonSet(set))
 </script>
 </body>
 </html>
