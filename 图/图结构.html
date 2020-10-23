@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图结构</title>
+</head>
+
+<body>
+    <script src="./dict.js"></script>
+    <script src="./queue.js"></script>
+    <script>
+        function Graph() {
+            //属性：顶点（数组），边（字典）
+            this.vertexes = []
+            this.edges = new Dictionary()
+
+            //方法
+            //添加顶点
+            Graph.prototype.addVertex = function (v) {
+                if (this.vertexes.indexOf(v) == -1) {
+                    this.vertexes.push(v)
+                    this.edges.set(v, [])
+                } else {
+                    return false
+                }
+            }
+            //添加边
+            Graph.prototype.addEdge = function (v1, v2) {
+                this.edges.get(v1).push(v2)
+                this.edges.get(v2).push(v1)
+            }
+            //toString方法
+            Graph.prototype.toString = function () {
+                var result = ''
+                for(var i = 0; i < this.vertexes.length; i ++){
+                    result += this.vertexes[i] + '->' 
+                    var vEdges = this.edges.get(this.vertexes[i])
+                    for(var j = 0; j < vEdges.length; j ++){
+                        result += vEdges[j] + ' '
+                    }
+                    result += '\n'
+                }
+                return result
+            }
+            //初始化状态颜色
+            Graph.prototype.initializeColor = function(){
+                var colors = []
+                for(var i = 0; i < this.vertexes.length;i++){
+                    colors[this.vertexes[i]] = 'white'
+                }
+                return colors
+            }
+            //实现广度优先搜索BFS
+            Graph.prototype.bfs = function(initV, handler){
+                //初始化颜色
+                var colors = this.initializeColor()
+                //创建队列
+                var queue = new Queue()
+
+                //将顶点加入到队列中
+                queue.enqueue(initV)
+
+                //循环从队列中取出元素
+                while(!queue.isEmpty()){
+                    //从队列中取出一个顶点
+                    var v = queue.dequeue()
+
+                    //获取和顶点相邻的其他顶点
+                    var vList = this.edges.get(v)
+                    //将v的颜色设置成灰色
+                    colors[v] = 'gray'
+                    //编列所有的顶点，加入到队列中
+                    for(var i =0 ; i< vList.length;i++){
+                        var other = vList[i]
+                        if(colors[other] == 'white'){
+                            colors[other] = 'gray'
+                            queue.enqueue(other)
+                        }
+                    }
+
+                    //访问顶点
+                    handler(v)
+                    //将顶点设置为黑色
+                    colors[v] = 'black'
+                }
+            }
+            //深度优先搜索DFS
+            Graph.prototype.dfs = function(initV, handler){
+                //初始化颜色
+                var colors = this.initializeColor()
+
+                //从某个顶点开始依次递归访问
+                this.dfsVisit(initV, colors, handler)
+            }
+            Graph.prototype.dfsVisit = function(v, colors, handler){
+                //将颜色设置为灰色
+                colors[v] = 'gray'
+
+                //处理v顶点
+                handler(v)
+
+                //访问v相连的顶点
+                var vList = this.edges.get(v)
+                for(var i = 0; i < vList.length; i++){
+                    var e = vList[i]
+                    if(colors[e] == 'white'){
+                        this.dfsVisit(e, colors, handler)
+                    }
+                }
+                //将v设置成黑色
+                colors[v] = 'black'
+            }
+        }
+
+        //测试
+        var g = new Graph()
+
+        var myVertexes = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
+        myVertexes.forEach(item => {
+            g.addVertex(item)
+        })
+        g.addEdge('A', 'B');
+        g.addEdge('A', 'C');
+        g.addEdge('A', 'D');
+        g.addEdge('C', 'D');
+        g.addEdge('C', 'G');
+        g.addEdge('D', 'G');
+        g.addEdge('D', 'H');
+        g.addEdge('B', 'E');
+        g.addEdge('B', 'F');
+        g.addEdge('E', 'I');
+        console.log(g)
+        console.log(g.toString())
+        var result = ''
+        // g.bfs(g.vertexes[0], function(v){
+        //     result += v + ' '
+        // })
+        g.dfs(g.vertexes[0], function(v){
+            result += v + ' '
+        })
+        console.log(result)
+    </script>
+</body>
+
+</html>
