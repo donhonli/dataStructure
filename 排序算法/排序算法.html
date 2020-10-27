@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冒泡排序</title>
+</head>
+
+<body>
+    <script>
+        //创建列表类
+        function ArrayList() {
+            this.array = []
+
+            //方法
+            ArrayList.prototype.insert = function (item) {
+                this.array.push(item)
+            }
+
+            //toString
+            ArrayList.prototype.toString = function () {
+                return this.array.join(' ')
+            }
+            //交换
+            ArrayList.prototype.swap = function (m, n) {
+                var temp = this.array[m]
+                this.array[m] = this.array[n]
+                this.array[n] = temp
+            }
+            //冒泡排序
+            ArrayList.prototype.bubbleSort = function () {
+                var length = this.array.length - 1
+                while (length > 0) {
+                    for (var i = 0; i < length; i++) {
+                        if (this.array[i] > this.array[i + 1]) {
+                            this.swap(i, i + 1)
+                        }
+                    }
+                    length--
+                }
+
+            }
+            //选择排序
+            ArrayList.prototype.selectSort = function () {
+                var length = this.array.length
+                for (var i = 0; i < length - 1; i++) {
+                    var min = i
+                    for (var j = min + 1; j < length; j++) {
+                        if (this.array[min] > this.array[j]) {
+                            min = j
+                        }
+                    }
+                    this.swap(min, i)
+                }
+            }
+            //插入排序
+            ArrayList.prototype.insertSort = function () {
+                // 获取数组长度
+                var length = this.array.length
+                //外层循环：从第一个位置开始获取数据 向前面局部有序插入
+                for (var i = 1; i < length; i++) {
+                    // 内层循环：获取i位置的元素，和前面的数据一次进行比较
+                    var temp = this.array[i]
+                    var j = i
+                    while (this.array[j - 1] > temp && j > 0) {
+                        this.array[j] = this.array[j - 1]
+                        j--
+                    }
+                    //将j位置  放置temp
+                    this.array[j] = temp
+                }
+            }
+            //希尔排序
+            ArrayList.prototype.shellSort = function () {
+                //获取数组长度
+                var length = this.array.length
+                //初始化增量
+                var gap = Math.floor(length / 2)
+
+                //间隔不断减少
+                while (gap >= 1) {
+                    //以gap进行插入排序
+                    for (var i = gap; i < length; i++) {
+                        var temp = this.array[i]
+                        var j = i
+                        while(this.array[j - gap] > temp && j > gap - 1) {
+                            this.array[j] = this.array[j - gap]
+                            j -= gap
+                        }
+                        //将j位置  放置temp
+                        this.array[j] = temp
+                    }
+                    gap = Math.floor(gap / 2)
+                }
+            }
+            //归并排序
+            ArrayList.prototype.mergeSort = function(){
+                return this.mergeLoop(this.array)
+            }
+            ArrayList.prototype.mergeLoop = function(array){
+                if(array.length == 1){
+                    return array
+                }
+                var middle = Math.floor(array.length / 2) //求出中点
+                var leftArr = array.slice(0,middle) //分割数组
+                var rightArr = array.slice(middle)
+                return this.merge(this.mergeLoop(leftArr), this.mergeLoop(rightArr))
+            }
+            ArrayList.prototype.merge = function(left,right){   
+                var result = []
+                while(left.length > 0 && right.length > 0){
+                    if(left[0] > right[0]){
+                        result.push(right.shift()) //取出最小的
+                    }else {
+                        result.push(left.shift())
+                    }
+                }
+                return result.concat(left).concat(right) //合并
+            }
+            //快速排序
+            // ArrayList.prototype.quickSort = function(){
+            //     return this.quickLoop(this.array)
+            // }
+            // ArrayList.prototype.quickLoop = function(arr){
+            //     if(arr.length <= 1){
+            //         return arr
+            //     }
+            //     var pivotIndex = Math.floor(arr.length / 2)
+            //     var pivot = arr.splice(pivotIndex,1)[0]
+            //     var left = [] , right = []
+            //     for(var i = 0; i < arr.length; i++){
+            //         if(arr[i] < pivot){
+            //             left.push(arr[i])
+            //         }else {
+            //             right.push(arr[i])
+            //         }
+            //     }
+            //     return this.quickLoop(left).concat([pivot], this.quickLoop(right))
+            // }
+
+            ArrayList.prototype.quickSort = function(){
+                this.quickLoop(this.array, 0, this.array.length - 1)
+            }
+            ArrayList.prototype.quickLoop = function(array, left, right){
+                if(left > right){
+                    return;
+                }
+                var storeIndex = this.partition(array,left,right)
+                this.quickLoop(array,left,storeIndex - 1)
+                this.quickLoop(array,storeIndex + 1, right)
+            }
+            ArrayList.prototype.partition = function(array,left,right){
+                var index = left
+                var pivot = array[right]
+                for(var i = index ; i < right; i ++){
+                    if(array[i] < pivot){
+                        this.swap(i,index)
+                        index ++
+                    }
+                }
+                this.swap(right, index)
+                return index
+            }
+        }
+
+        var list = new ArrayList()
+        list.insert(46)
+        list.insert(2)
+        list.insert(23)
+        list.insert(67)
+        list.insert(15)
+        list.insert(35)
+        list.insert(56)
+        list.insert(85)
+        list.insert(43)
+        list.insert(43)
+        console.log(list.toString())
+
+        // list.bubbleSort()
+        // list.selectSort()
+        // list.insertSort()
+        // list.shellSort()
+        // var result = list.mergeSort()//归并
+        // var result = list.quickSort() //第一种快排（阮一峰）
+        list.quickSort() //第二种快排（原地分区法）
+        console.log(list.toString())
+
+
+    </script>
+</body>
+
+</html>
